@@ -3,6 +3,6 @@
 
 - name: Pre upgrade v23 specific task
   ansible.builtin.debug:
-    msg: this is a specific task beforeo upgrade v23.0.12
+    msg: this is a specific task before upgrade v23.0.12
 
 ...

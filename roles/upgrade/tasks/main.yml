@@ -1,17 +1,16 @@
-#SPDX-License-Identifier: GPL-3.0-or-later
 ---
 # tasks file for upgrade
 
 - name: See upgrade path
   ansible.builtin.debug:
     var: cielito_upgrade_path
+    verbosity: 2
 
 - name: Find in `cielito_upgrade_path` the first version to upgrade to
   ansible.builtin.set_fact:
     cielito_start_index: '{{ current_cielito_version_index }}'
   when: cielito_initial_version is version(current_cielito_version, '<')
   loop: '{{ cielito_upgrade_path }}'
-  # La lista glup_upgrade_path está definida en las variables del grupo gitlab2upgrade, o del host
   loop_control:
     loop_var: current_cielito_version
     index_var: current_cielito_version_index
@@ -23,7 +22,6 @@
     cielito_end_index: '{{ cielito_upgrade_path | length - current_cielito_version_index }}'
   when: cielito_target_version is version(current_cielito_version, '>=')
   loop: '{{ cielito_upgrade_path | reverse }}'
-  # La lista glup_upgrade_path está definida en las variables del grupo gitlab2upgrade, o del host
   loop_control:
     loop_var: current_cielito_version
     index_var: current_cielito_version_index
@@ -32,16 +30,17 @@
 - name: Debug indexes
   ansible.builtin.debug:
     var: '{{ item }}'
+    verbosity: 2
   loop:
     - cielito_start_index
     - cielito_end_index
 
-- name: Build `cielito_current_upgrade_path`
+- name: Build `current_cielito_upgrade_path`
   ansible.builtin.set_fact:
     current_cielito_version: '{{ cielito_initial_version }}'
     current_cielito_upgrade_path: "{{ cielito_upgrade_path[cielito_start_index | int : cielito_end_index | int] | community.general.lists_union([cielito_target_version]) }}"
 
-- name: See `cielito_current_upgrade_path`
+- name: See `current_cielito_upgrade_path`
   ansible.builtin.debug:
     var: current_cielito_upgrade_path
     verbosity: 2
