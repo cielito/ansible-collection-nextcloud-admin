@@ -1,0 +1,6 @@
+---
+- name: Test nextcloud.admin.upgrade role
+  hosts: localhost
+  remote_user: root
+  roles:
+    - upgrade

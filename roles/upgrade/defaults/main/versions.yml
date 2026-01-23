@@ -1,0 +1,25 @@
+---
+# defaults file for upgrade
+
+cielito_initial_version: '{{ cielito_upgrade_path | first }}'
+cielito_target_version: '{{ cielito_upgrade_path | last }}'
+
+cielito_upgrade_path:
+- 20.0.14
+- 21.0.9
+- 22.2.10
+- 23.0.12
+- 24.0.12
+- 25.0.13
+- 26.0.13
+- 27.1.11
+- 28.0.14
+- 29.0.16
+- 30.0.17 # https://nextcloud.com/changelog/#latest30
+- 31.0.10 # https://nextcloud.com/changelog/#latest31
+- 32.0.1  # https://nextcloud.com/changelog/#latest32
+
+# References:
+# - https://nextcloud.com/changelog/
+# - https://docs.nextcloud.com/server/latest/admin_manual/maintenance/upgrade.html
+# - https://docs.nextcloud.com/server/latest/admin_manual/maintenance/manual_upgrade.html

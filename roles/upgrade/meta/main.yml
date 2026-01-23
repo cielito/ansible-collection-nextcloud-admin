@@ -1,0 +1,28 @@
+---
+galaxy_info:
+  author: Daniel Viñar Ulriksen, Francisco Zadikian
+  description: Role to upgrade a nextcloud instance along an upgrade path
+  company: UdelaR
+
+  license: BSD
+
+  min_ansible_version: "2.14"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bookworm
+        - bullseye
+
+  galaxy_tags:
+    - nextcloud
+    - filesharing
+    - upgrade
+    - private
+    - cloud
+
+dependencies: []

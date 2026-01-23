@@ -1,0 +1,34 @@
+---
+# Upgrade one step in the path, from `current_cielito_version` to `current_step_cielito_version`
+
+- name: Specific tasks before upgrade to version {{ current_step_cielito_version }}
+  ansible.builtin.include_tasks: '{{ item }}'
+  with_first_found:
+    - files:
+        - upgrade/tasks_pre_{{ current_step_cielito_version }}.yml
+        - upgrade/tasks_pre_{{ step_version_members[0:1] | join('.') }}.yml
+        - upgrade/tasks_pre_{{ step_version_members[0] | string }}.yml
+      skip: true
+  vars:
+    step_version_members: "{{ current_step_cielito_version | ansible.builtin.split('.') }}"
+
+- name: Here comes the step upgrade
+  ansible.builtin.debug:
+    msg: upgrade from {{ current_cielito_version }} to {{ current_step_cielito_version }}
+
+- name: Set current version to upgraded
+  ansible.builtin.set_fact:
+    current_cielito_version: '{{ current_step_cielito_version }}'
+
+- name: Specific tasks after upgrade to version {{ current_step_cielito_version }}
+  ansible.builtin.include_tasks: '{{ item }}'
+  with_first_found:
+    - files:
+        - upgrade/tasks_post_{{ current_step_cielito_version }}.yml
+        - upgrade/tasks_post_{{ step_version_members[0:1] | join('.') }}.yml
+        - upgrade/tasks_post_{{ step_version_members[0] | string }}.yml
+      skip: true
+  vars:
+    step_version_members: "{{ current_step_cielito_version | ansible.builtin.split('.') }}"
+
+...
