@@ -1,0 +1,47 @@
+---
+# Pre-upgrade checks for upgrade role (this should be more permissive)
+
+- name: Ensure `nextcloud_webroot` is defined
+  ansible.builtin.assert:
+    that:
+      - nextcloud_webroot is defined
+      - nextcloud_webroot | length > 0
+    fail_msg: "Variable `nextcloud_webroot` must be defined and non-empty"
+    success_msg: "Variable `nextcloud_webroot` is set to '{{ nextcloud_webroot }}'"
+
+- name: Ensure `nextcloud_upgrade_path` is defined and has at least 2 versions
+  ansible.builtin.assert:
+    that:
+      - nextcloud_upgrade_path is defined
+      - nextcloud_upgrade_path | length >= 2
+    fail_msg: "Variable `nextcloud_upgrade_path` must be defined and contain at least 2 versions"
+    success_msg: "Variable `nextcloud_upgrade_path` contains {{ nextcloud_upgrade_path | length }} versions"
+
+- name: Ensure `nextcloud_initial_version` is in the upgrade path
+  ansible.builtin.assert:
+    that:
+      - nextcloud_initial_version in nextcloud_upgrade_path
+    fail_msg: >-
+      nextcloud_initial_version '{{ nextcloud_initial_version }}' is not present in nextcloud_upgrade_path.
+      Available versions: {{ nextcloud_upgrade_path | join(', ') }}
+    success_msg: "nextcloud_initial_version '{{ nextcloud_initial_version }}' found in upgrade path"
+
+- name: Ensure `nextcloud_target_version` is in the upgrade path
+  ansible.builtin.assert:
+    that:
+      - nextcloud_target_version in nextcloud_upgrade_path
+    fail_msg: >-
+      nextcloud_target_version '{{ nextcloud_target_version }}' is not present in nextcloud_upgrade_path.
+      Available versions: {{ nextcloud_upgrade_path | join(', ') }}
+    success_msg: "nextcloud_target_version '{{ nextcloud_target_version }}' found in upgrade path"
+
+- name: Ensure target version is greater than or equal to initial version
+  ansible.builtin.assert:
+    that:
+      - nextcloud_target_version is version(nextcloud_initial_version, '>=')
+    fail_msg: >-
+      nextcloud_target_version '{{ nextcloud_target_version }}' must be greater than or equal to
+      nextcloud_initial_version '{{ nextcloud_initial_version }}'
+    success_msg: "Version ordering is valid ({{ nextcloud_initial_version }} -> {{ nextcloud_target_version }})"
+
+...

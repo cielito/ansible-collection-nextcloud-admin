@@ -1,6 +1,9 @@
 ---
 # tasks file for upgrade
 
+- name: Run pre-upgrade checks
+  ansible.builtin.include_tasks: assert.yml
+
 - name: Build `current_nextcloud_upgrade_path`
   ansible.builtin.set_fact:
     current_nextcloud_version: '{{ nextcloud_initial_version }}'
@@ -20,5 +23,6 @@
   loop: '{{ current_nextcloud_upgrade_path }}'
   loop_control:
     loop_var: current_step_nextcloud_version
+  when: current_nextcloud_upgrade_path | length > 0
 
 ...
