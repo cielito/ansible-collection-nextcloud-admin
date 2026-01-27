@@ -1,10 +1,10 @@
 ---
 # defaults file for upgrade
 
-cielito_initial_version: '{{ cielito_upgrade_path | first }}'
-cielito_target_version: '{{ cielito_upgrade_path | last }}'
+nextcloud_initial_version: '{{ nextcloud_upgrade_path | first }}'
+nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 
-cielito_upgrade_path:
+nextcloud_upgrade_path:
 - 20.0.14
 - 21.0.9
 - 22.2.10
