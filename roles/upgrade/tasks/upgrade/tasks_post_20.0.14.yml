@@ -1,8 +1,0 @@
----
-# Example of specific tasks afred upgrade
-
-- name: Post upgrade v20 specific task
-  ansible.builtin.debug:
-    msg: this is a specific task after upgrade v20.0.14
-
-...

@@ -1,8 +1,0 @@
----
-# Example of specific tasks before upgrade
-
-- name: Pre upgrade v23 specific task
-  ansible.builtin.debug:
-    msg: this is a specific task before upgrade v23.0.12
-
-...

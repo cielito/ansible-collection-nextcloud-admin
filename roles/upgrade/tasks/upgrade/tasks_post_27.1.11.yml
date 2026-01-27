@@ -1,0 +1,11 @@
+---
+
+## Specific tasks after upgrading to NC 27
+
+- name: Sincronización de la libreta de direcciones
+  become_user: "{{ nextcloud_websrv_user | default( 'www-data' ) }}"
+  command: php occ -vvv dav:sync-system-addressbook
+  args:
+    chdir: "{{ nextcloud_webroot }}"
+
+...

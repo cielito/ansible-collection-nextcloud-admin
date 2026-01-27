@@ -1,31 +1,76 @@
 ---
 # Upgrade one step in the path, from `current_nextcloud_version` to `current_step_nextcloud_version`
 
+# Check version we are upgrading to
+
+- name: Copy version check script
+  become: true
+  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
+  ansible.builtin.copy:
+    src: "files/check_next_version.php"
+    dest: "/tmp/check_next_version.php"
+    mode: '0644'
+
+- name: Check next version available from updater server
+  become: true
+  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
+  ansible.builtin.command: php /tmp/check_next_version.php
+  args:
+    chdir: "{{ nextcloud_webroot }}"
+  register: next_version_check
+  changed_when: false
+
+- name: Verify next version matches upgrade path
+  ansible.builtin.fail:
+    msg: >-
+      Nextcloud updater would upgrade to '{{ next_version_check.stdout | trim }}',
+      but Ansible expects '{{ current_step_nextcloud_version }}'.
+      Ensure your upgrade path is correct.
+  when: next_version_check.stdout | trim != current_step_nextcloud_version
+
+# Tasks to run before the upgrade
+
 - name: Specific tasks before upgrade to version {{ current_step_nextcloud_version }}
   ansible.builtin.include_tasks: '{{ item }}'
   with_first_found:
     - files:
         - upgrade/tasks_pre_{{ current_step_nextcloud_version }}.yml
-        - upgrade/tasks_pre_{{ step_version_members[0:1] | join('.') }}.yml
+        - upgrade/tasks_pre_{{ step_version_members[0:2] | join('.') }}.yml
         - upgrade/tasks_pre_{{ step_version_members[0] | string }}.yml
       skip: true
   vars:
     step_version_members: "{{ current_step_nextcloud_version | ansible.builtin.split('.') }}"
 
-- name: Here comes the step upgrade
-  ansible.builtin.debug:
-    msg: upgrade from {{ current_nextcloud_version }} to {{ current_step_nextcloud_version }}
+# Upgrade step
+
+- name: Upgrade Nextcloud to version {{ current_step_nextcloud_version }}
+  become: true
+  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
+  ansible.builtin.command: "php {{ nextcloud_webroot }}/updater/updater.phar  --no-interaction"
+  args:
+    chdir: "{{ nextcloud_webroot }}"
+  changed_when: true
 
 - name: Set current version to upgraded
   ansible.builtin.set_fact:
     current_nextcloud_version: '{{ current_step_nextcloud_version }}'
+
+# Tasks to run after the upgrade
+
+- name: Add missing indices
+  become: true
+  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
+  ansible.builtin.command: php occ -vvv db:add-missing-indices
+  args:
+    chdir: "{{ nextcloud_webroot }}"
+  changed_when: true
 
 - name: Specific tasks after upgrade to version {{ current_step_nextcloud_version }}
   ansible.builtin.include_tasks: '{{ item }}'
   with_first_found:
     - files:
         - upgrade/tasks_post_{{ current_step_nextcloud_version }}.yml
-        - upgrade/tasks_post_{{ step_version_members[0:1] | join('.') }}.yml
+        - upgrade/tasks_post_{{ step_version_members[0:2] | join('.') }}.yml
         - upgrade/tasks_post_{{ step_version_members[0] | string }}.yml
       skip: true
   vars:

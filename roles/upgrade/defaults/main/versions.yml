@@ -1,6 +1,8 @@
 ---
 # defaults file for upgrade
 
+# this role requires nextcloud_webroot to be set, optionally nextcloud_websrv_user as well.
+
 nextcloud_initial_version: '{{ nextcloud_upgrade_path | first }}'
 nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 

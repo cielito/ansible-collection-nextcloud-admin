@@ -1,0 +1,11 @@
+---
+
+## Specific tasks after upgrading to NC 31
+
+- name: Agregado de nuevos mimetypes para manejo de ciertos tipos de archivos
+  become_user: "{{ nextcloud_websrv_user | default( 'www-data' ) }}"
+  command: php occ maintenance:repair --include-expensive
+  args:
+    chdir: "{{ nextcloud_webroot }}"
+
+...
