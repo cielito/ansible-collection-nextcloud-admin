@@ -5,7 +5,7 @@
   vars:
     _initial_major_minor: "{{ nextcloud_initial_version.split('.')[:2] | join('.') }}"
     _compatible_versions: >-
-      {{ nextcloud_upgrade_path | select('match', '^' ~ _initial_major_minor ~ '\\.') |
+      {{ nextcloud_upgrade_path | select('match', '^' ~ _initial_major_minor ~ '[.]') |
          select('version', nextcloud_initial_version, '>=') | list }}
   ansible.builtin.assert:
     that:
