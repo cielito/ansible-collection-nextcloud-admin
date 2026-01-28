@@ -4,7 +4,9 @@
 # this role requires `nextcloud_webroot` to be set, defaults to `/opt/nextcloud`.
 # `nextcloud_websrv_user` needs to be set as well, defaults to `www-data`.
 
-nextcloud_initial_version: '{{ nextcloud_upgrade_path | first }}'
+# If not set, `nextcloud_initial_version` will be auto-detected from the installed instance.
+# nextcloud_initial_version: '{{ nextcloud_upgrade_path | first }}'
+
 nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 
 nextcloud_upgrade_path:

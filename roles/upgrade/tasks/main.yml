@@ -1,6 +1,10 @@
 ---
 # tasks file for upgrade
 
+- name: Auto-detect current Nextcloud version
+  ansible.builtin.include_tasks: current_version.yml
+  when: nextcloud_initial_version is not defined
+
 - name: Run pre-upgrade checks
   ansible.builtin.include_tasks: assert.yml
 
