@@ -12,7 +12,7 @@
       - _compatible_versions | length > 0
     fail_msg: >-
       No compatible version found for nextcloud_initial_version '{{ nextcloud_initial_version }}'.
-      Expected a version >= {{ nextcloud_initial_version }} with major.minor {{ _initial_major_minor }}.
+      Expected a version >= {{ nextcloud_initial_version }} with same major.minor.
       Available versions: {{ nextcloud_upgrade_path | join(', ') }}
     success_msg: >-
       Compatible versions found for '{{ nextcloud_initial_version }}': {{ _compatible_versions | join(', ') }}
