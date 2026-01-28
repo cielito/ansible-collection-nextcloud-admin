@@ -3,7 +3,7 @@
 
 - name: Ensure `nextcloud_initial_version` has a compatible version in the upgrade path
   vars:
-    _initial_major_minor: "{{ nextcloud_initial_version.split('.')[:2] | join('.') }}"
+    _initial_major_minor: "{{ nextcloud_initial_version.split('.')[:2] | join('[.]') }}"
     _compatible_versions: >-
       {{ nextcloud_upgrade_path | select('match', '^' ~ _initial_major_minor ~ '[.]') |
          select('version', nextcloud_initial_version, '>=') | list }}
@@ -26,13 +26,13 @@
       Available versions: {{ nextcloud_upgrade_path | join(', ') }}
     success_msg: "nextcloud_target_version '{{ nextcloud_target_version }}' found in upgrade path"
 
-- name: Ensure target version is greater than initial version
+- name: Ensure target version is greater than or equal to initial version
   ansible.builtin.assert:
     that:
-      - nextcloud_target_version is version(nextcloud_initial_version, '>')
+      - nextcloud_target_version is version(nextcloud_initial_version, '>=')
     fail_msg: >-
-      nextcloud_target_version '{{ nextcloud_target_version }}' must be greater than
+      nextcloud_target_version '{{ nextcloud_target_version }}' must be greater than or equal to
       nextcloud_initial_version '{{ nextcloud_initial_version }}'
-    success_msg: "Version ordering is valid ({{ nextcloud_target_version }} > {{ nextcloud_initial_version }})"
+    success_msg: "Version ordering is valid ({{ nextcloud_target_version }} >= {{ nextcloud_initial_version }})"
 
 ...
