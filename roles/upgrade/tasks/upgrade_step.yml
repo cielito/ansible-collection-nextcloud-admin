@@ -3,30 +3,8 @@
 
 # Check version we are upgrading to
 
-- name: Copy version check script
-  become: true
-  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
-  ansible.builtin.copy:
-    src: "files/check_next_version.php"
-    dest: "/tmp/check_next_version.php"
-    mode: '0644'
-
-- name: Check next version available from updater server
-  become: true
-  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
-  ansible.builtin.command: php /tmp/check_next_version.php
-  args:
-    chdir: "{{ nextcloud_webroot | default('/opt/nextcloud') }}"
-  register: next_version_check
-  changed_when: false
-
-- name: Verify next version matches upgrade path
-  ansible.builtin.fail:
-    msg: >-
-      Nextcloud updater would upgrade to '{{ next_version_check.stdout | trim }}',
-      but Ansible expects '{{ current_step_nextcloud_version }}'.
-      Ensure your upgrade path is correct.
-  when: next_version_check.stdout | trim != current_step_nextcloud_version
+- name: Run version checks
+  ansible.builtin.include_tasks: version_check.yml
 
 # Tasks to run before the upgrade
 

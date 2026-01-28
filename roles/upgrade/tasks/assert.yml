@@ -1,22 +1,21 @@
 ---
-# Pre-upgrade checks for upgrade role (this should be more permissive)
+# Pre-upgrade checks for upgrade role
 
-- name: Ensure `nextcloud_upgrade_path` is defined and has at least 2 versions
+- name: Ensure `nextcloud_initial_version` has a compatible version in the upgrade path
+  vars:
+    _initial_major_minor: "{{ nextcloud_initial_version.split('.')[:2] | join('.') }}"
+    _compatible_versions: >-
+      {{ nextcloud_upgrade_path | select('match', '^' ~ _initial_major_minor ~ '\\.') |
+         select('version', nextcloud_initial_version, '>=') | list }}
   ansible.builtin.assert:
     that:
-      - nextcloud_upgrade_path is defined
-      - nextcloud_upgrade_path | length >= 2
-    fail_msg: "Variable `nextcloud_upgrade_path` must be defined and contain at least 2 versions"
-    success_msg: "Variable `nextcloud_upgrade_path` contains {{ nextcloud_upgrade_path | length }} versions"
-
-- name: Ensure `nextcloud_initial_version` is in the upgrade path
-  ansible.builtin.assert:
-    that:
-      - nextcloud_initial_version in nextcloud_upgrade_path
+      - _compatible_versions | length > 0
     fail_msg: >-
-      nextcloud_initial_version '{{ nextcloud_initial_version }}' is not present in nextcloud_upgrade_path.
+      No compatible version found for nextcloud_initial_version '{{ nextcloud_initial_version }}'.
+      Expected a version >= {{ nextcloud_initial_version }} with major.minor {{ _initial_major_minor }}.
       Available versions: {{ nextcloud_upgrade_path | join(', ') }}
-    success_msg: "nextcloud_initial_version '{{ nextcloud_initial_version }}' found in upgrade path"
+    success_msg: >-
+      Compatible versions found for '{{ nextcloud_initial_version }}': {{ _compatible_versions | join(', ') }}
 
 - name: Ensure `nextcloud_target_version` is in the upgrade path
   ansible.builtin.assert:
