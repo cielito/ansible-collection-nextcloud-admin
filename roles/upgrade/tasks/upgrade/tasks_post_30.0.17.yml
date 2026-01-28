@@ -6,6 +6,6 @@
   become_user: "{{ nextcloud_websrv_user | default( 'www-data' ) }}"
   command: php occ maintenance:repair --include-expensive
   args:
-    chdir: "{{ nextcloud_webroot }}"
+    chdir: "{{ nextcloud_webroot | default('/opt/nextcloud') }}"
 
 ...

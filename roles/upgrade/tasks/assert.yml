@@ -1,14 +1,6 @@
 ---
 # Pre-upgrade checks for upgrade role (this should be more permissive)
 
-- name: Ensure `nextcloud_webroot` is defined
-  ansible.builtin.assert:
-    that:
-      - nextcloud_webroot is defined
-      - nextcloud_webroot | length > 0
-    fail_msg: "Variable `nextcloud_webroot` must be defined and non-empty"
-    success_msg: "Variable `nextcloud_webroot` is set to '{{ nextcloud_webroot }}'"
-
 - name: Ensure `nextcloud_upgrade_path` is defined and has at least 2 versions
   ansible.builtin.assert:
     that:
@@ -35,13 +27,13 @@
       Available versions: {{ nextcloud_upgrade_path | join(', ') }}
     success_msg: "nextcloud_target_version '{{ nextcloud_target_version }}' found in upgrade path"
 
-- name: Ensure target version is greater than or equal to initial version
+- name: Ensure target version is greater than initial version
   ansible.builtin.assert:
     that:
-      - nextcloud_target_version is version(nextcloud_initial_version, '>=')
+      - nextcloud_target_version is version(nextcloud_initial_version, '>')
     fail_msg: >-
-      nextcloud_target_version '{{ nextcloud_target_version }}' must be greater than or equal to
+      nextcloud_target_version '{{ nextcloud_target_version }}' must be greater than
       nextcloud_initial_version '{{ nextcloud_initial_version }}'
-    success_msg: "Version ordering is valid ({{ nextcloud_initial_version }} -> {{ nextcloud_target_version }})"
+    success_msg: "Version ordering is valid ({{ nextcloud_target_version }} > {{ nextcloud_initial_version }})"
 
 ...
