@@ -3,9 +3,11 @@
 ## Specific tasks after upgrading to NC 28
 
 - name: Add new mimetypes for handling certain file types
+  become: true
   become_user: "{{ nextcloud_websrv_user | default( 'www-data' ) }}"
   command: php occ maintenance:repair --include-expensive
   args:
     chdir: "{{ nextcloud_webroot | default('/opt/nextcloud') }}"
+  changed_when: true
 
 ...
