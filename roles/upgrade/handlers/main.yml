@@ -1,2 +1,11 @@
 ---
 # handlers file for upgrade
+
+- name: Delete version check script
+  become: true
+  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
+  ansible.builtin.file:
+    path: /tmp/check_next_version.php
+    state: absent
+
+...

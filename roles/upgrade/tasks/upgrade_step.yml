@@ -1,12 +1,11 @@
 ---
 # Upgrade one step in the path, from `current_nextcloud_version` to `current_step_nextcloud_version`
 
-# Check version we are upgrading to
-
 # Check PHP version compatibility
 - name: Run PHP version compatibility check
   ansible.builtin.include_tasks: php_version_check.yml
 
+# Check Nextcloud version we are upgrading to
 - name: Run version checks
   ansible.builtin.include_tasks: version_check.yml
 

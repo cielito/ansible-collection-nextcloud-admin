@@ -8,6 +8,7 @@
     src: "files/check_next_version.php"
     dest: "/tmp/check_next_version.php"
     mode: '0644'
+  notify: Delete version check script
 
 - name: Check next version available from updater server
   become: true
@@ -18,12 +19,14 @@
   register: next_version_check
   changed_when: false
 
-- name: Verify next version matches upgrade path
-  ansible.builtin.fail:
-    msg: >-
+- name: Verify version upgrading to matches upgrade path
+  ansible.builtin.assert:
+    that:
+      - next_version_check.stdout | trim == current_step_nextcloud_version
+    fail_msg: >-
       Nextcloud updater would upgrade to '{{ next_version_check.stdout | trim }}',
       but Ansible expects '{{ current_step_nextcloud_version }}'.
       Ensure your upgrade path is correct.
-  when: next_version_check.stdout | trim != current_step_nextcloud_version
+    success_msg: "Nextcloud updater confirms upgrade to {{ current_step_nextcloud_version }}."
 
 ...
