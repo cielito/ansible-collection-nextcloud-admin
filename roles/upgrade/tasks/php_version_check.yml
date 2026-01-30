@@ -1,0 +1,28 @@
+---
+# Check PHP version compatibility
+
+- name: Get current PHP version
+  ansible.builtin.command: php -r "echo PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;"
+  register: php_version_result
+  changed_when: false
+
+- name: Set PHP version fact
+  ansible.builtin.set_fact:
+    current_php_version: "{{ php_version_result.stdout | trim }}"
+
+- name: Get PHP requirements for target version
+  ansible.builtin.set_fact:
+    php_min_version: "{{ nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]].min }}"
+    php_max_version: "{{ nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]].max }}"
+
+- name: Verify PHP version is compatible with Nextcloud {{ current_step_nextcloud_version }}
+  ansible.builtin.assert:
+    that:
+      - current_php_version is version(php_min_version, '>=')
+      - current_php_version is version(php_max_version, '<=')
+    fail_msg: >-
+      PHP {{ current_php_version }} is not compatible with Nextcloud {{ current_step_nextcloud_version }}.
+      Required: PHP >= {{ php_min_version }} and <= {{ php_max_version }}.
+    success_msg: "PHP {{ current_php_version }} is compatible with Nextcloud {{ current_step_nextcloud_version }}."
+
+...

@@ -3,6 +3,10 @@
 
 # Check version we are upgrading to
 
+# Check PHP version compatibility
+- name: Run PHP version compatibility check
+  ansible.builtin.include_tasks: php_version_check.yml
+
 - name: Run version checks
   ansible.builtin.include_tasks: version_check.yml
 

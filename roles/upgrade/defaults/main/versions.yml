@@ -9,6 +9,23 @@
 
 nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 
+# PHP requirements per Nextcloud major version
+# Based on: https://github.com/nextcloud/server/wiki/Releases-and-PHP-versions
+nextcloud_php_requirements:
+  '20': { min: '7.2', max: '7.4' }
+  '21': { min: '7.3', max: '8.0' }
+  '22': { min: '7.3', max: '8.0' }
+  '23': { min: '7.3', max: '8.0' }
+  '24': { min: '7.4', max: '8.1' }
+  '25': { min: '7.4', max: '8.1' }
+  '26': { min: '8.0', max: '8.2' }
+  '27': { min: '8.0', max: '8.2' }
+  '28': { min: '8.0', max: '8.3' }
+  '29': { min: '8.0', max: '8.3' }
+  '30': { min: '8.1', max: '8.3' }
+  '31': { min: '8.1', max: '8.4' }
+  '32': { min: '8.1', max: '8.4' }
+
 nextcloud_upgrade_path:
 - 20.0.14
 - 21.0.9
