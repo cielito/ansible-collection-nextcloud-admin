@@ -1,0 +1,35 @@
+---
+# Playbook to upgrade PHP
+
+- name: Stop services before upgrade
+  ansible.builtin.include_tasks: manage_services.yml
+  vars:
+    nextcloud_maintenance_mode: true
+
+- name: Set role variables
+  ansible.builtin.set_fact:
+    php_conf_paths:
+      - /etc/php/{{ php_version }}/fpm
+      - /etc/php/{{ php_version }}/apache2
+      - /etc/php/{{ php_version }}/cli
+    php_extension_conf_paths:
+      - /etc/php/{{ php_version }}/fpm/conf.d
+      - /etc/php/{{ php_version }}/apache2/conf.d
+      - /etc/php/{{ php_version }}/cli/conf.d
+
+- name: 'Remove installed PHP versions different from {{ php_version }}'
+  ansible.builtin.import_role:
+    name: geerlingguy.php-versions
+
+- name: 'Install PHP {{ php_version }}'
+  ansible.builtin.import_role:
+    name: jpiron.php
+  vars:
+    php_enable_webserver: false # We handle starting/stopping the webserver within this role.
+
+- name: Start services after upgrade
+  ansible.builtin.include_tasks: manage_services.yml
+  vars:
+    nextcloud_maintenance_mode: false
+
+...
