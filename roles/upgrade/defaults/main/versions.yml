@@ -9,22 +9,33 @@
 
 nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 
+# Enables automatic PHP version upgrade using geerlingguy.php-versions and geerlingguy.php roles.
+# When enabled, upgrades PHP to the recommended version for the target Nextcloud major version.
+# WARNING: This will:
+#   - Uninstall all existing PHP versions except the target version
+#   - Add third-party repositories if required for the target PHP version
+# IMPORTANT: Use the same PHP configuration variables as your initial Nextcloud installation.
+# More information:
+#   - https://github.com/geerlingguy/ansible-role-php
+#   - https://github.com/geerlingguy/ansible-role-php-versions
+nextcloud_upgrade_php: false
+
 # PHP requirements per Nextcloud major version
 # Based on: https://github.com/nextcloud/server/wiki/Releases-and-PHP-versions
 nextcloud_php_requirements:
-  '20': { min: '7.2', max: '7.4' }
-  '21': { min: '7.3', max: '8.0' }
-  '22': { min: '7.3', max: '8.0' }
-  '23': { min: '7.3', max: '8.0' }
-  '24': { min: '7.4', max: '8.1' }
-  '25': { min: '7.4', max: '8.1' }
-  '26': { min: '8.0', max: '8.2' }
-  '27': { min: '8.0', max: '8.2' }
-  '28': { min: '8.0', max: '8.3' }
-  '29': { min: '8.0', max: '8.3' }
-  '30': { min: '8.1', max: '8.3' }
-  '31': { min: '8.1', max: '8.4' }
-  '32': { min: '8.1', max: '8.4' }
+  '20': { min: '7.2', rec: '7.4', max: '7.4' }
+  '21': { min: '7.3', rec: '8.0', max: '8.0' }
+  '22': { min: '7.3', rec: '8.0', max: '8.0' }
+  '23': { min: '7.3', rec: '8.0', max: '8.0' }
+  '24': { min: '7.4', rec: '8.0', max: '8.1' }
+  '25': { min: '7.4', rec: '8.1', max: '8.1' }
+  '26': { min: '8.0', rec: '8.1', max: '8.2' }
+  '27': { min: '8.0', rec: '8.2', max: '8.2' }
+  '28': { min: '8.0', rec: '8.2', max: '8.3' }
+  '29': { min: '8.0', rec: '8.2', max: '8.3' }
+  '30': { min: '8.1', rec: '8.3', max: '8.3' }
+  '31': { min: '8.1', rec: '8.3', max: '8.4' }
+  '32': { min: '8.1', rec: '8.3', max: '8.4' }
 
 nextcloud_upgrade_path:
 - 20.0.14
@@ -42,6 +53,6 @@ nextcloud_upgrade_path:
 - 32.0.5  # https://nextcloud.com/changelog/#latest32
 
 # References:
-# - https://nextcloud.com/changelog/
-# - https://docs.nextcloud.com/server/latest/admin_manual/maintenance/upgrade.html
-# - https://docs.nextcloud.com/server/latest/admin_manual/maintenance/manual_upgrade.html
+#   - https://nextcloud.com/changelog/
+#   - https://docs.nextcloud.com/server/latest/admin_manual/maintenance/upgrade.html
+#   - https://docs.nextcloud.com/server/latest/admin_manual/maintenance/manual_upgrade.html

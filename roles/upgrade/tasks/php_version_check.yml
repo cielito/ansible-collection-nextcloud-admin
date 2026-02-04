@@ -3,26 +3,44 @@
 
 - name: Get current PHP version
   ansible.builtin.command: php -r "echo PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;"
-  register: php_version_result
+  register: _php_version_result
   changed_when: false
 
 - name: Set PHP version fact
   ansible.builtin.set_fact:
-    current_php_version: "{{ php_version_result.stdout | trim }}"
+    current_php_version: "{{ _php_version_result.stdout | trim }}"
 
 - name: Get PHP requirements for target version
   ansible.builtin.set_fact:
     php_min_version: "{{ nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]].min }}"
     php_max_version: "{{ nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]].max }}"
+    php_rec_version: "{{ nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]].rec }}"
 
-- name: Verify PHP version is compatible with Nextcloud {{ current_step_nextcloud_version }}
-  ansible.builtin.assert:
-    that:
-      - current_php_version is version(php_min_version, '>=')
-      - current_php_version is version(php_max_version, '<=')
-    fail_msg: >-
+- name: Check if PHP version is compatible with Nextcloud {{ current_step_nextcloud_version }}
+  ansible.builtin.set_fact:
+    _php_version_compatible: "{{ current_php_version is version(php_min_version, '>=') and current_php_version is version(php_max_version, '<=') }}"
+
+- name: Fail if PHP version is incompatible and upgrade is disabled
+  ansible.builtin.fail:
+    msg: >-
       PHP {{ current_php_version }} is not compatible with Nextcloud {{ current_step_nextcloud_version }}.
       Required: PHP >= {{ php_min_version }} and <= {{ php_max_version }}.
-    success_msg: "PHP {{ current_php_version }} is compatible with Nextcloud {{ current_step_nextcloud_version }}."
+      Set nextcloud_upgrade_php to true to enable automatic PHP upgrades.
+  when:
+    - not _php_version_compatible
+    - not nextcloud_upgrade_php
+
+- name: Upgrade PHP if version is incompatible
+  ansible.builtin.include_tasks: php_upgrade.yml
+  vars:
+    php_version: "{{ php_rec_version }}"
+  when:
+    - not _php_version_compatible
+    - nextcloud_upgrade_php
+
+- name: PHP version is compatible
+  ansible.builtin.debug:
+    msg: "PHP {{ current_php_version }} is compatible with Nextcloud {{ current_step_nextcloud_version }}."
+  when: _php_version_compatible
 
 ...

@@ -23,9 +23,22 @@
 
 - name: 'Install PHP {{ php_version }}'
   ansible.builtin.import_role:
-    name: jpiron.php
+    name: geerlingguy.php
   vars:
     php_enable_webserver: false # We handle starting/stopping the webserver within this role.
+
+- name: Get updated PHP version
+  ansible.builtin.command: php -r "echo PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;"
+  register: _updated_php_version_result
+  changed_when: false
+
+- name: Verify PHP version matches expected version
+  ansible.builtin.assert:
+    that:
+      - _updated_php_version_result.stdout | trim == php_version
+    fail_msg: >-
+      PHP upgrade failed. Expected PHP {{ php_version }}, but got PHP {{ _updated_php_version_result.stdout | trim }}.
+    success_msg: "PHP successfully upgraded to version {{ php_version }}."
 
 - name: Start services after upgrade
   ansible.builtin.include_tasks: manage_services.yml
