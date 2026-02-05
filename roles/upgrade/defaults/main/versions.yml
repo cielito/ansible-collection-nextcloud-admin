@@ -14,6 +14,7 @@ nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 # WARNING: This will:
 #   - Uninstall all existing PHP versions except the target version
 #   - Add third-party repositories if required for the target PHP version
+#   - Stop web server and cron services during PHP version upgrade
 # IMPORTANT: Use the same PHP configuration variables as your initial Nextcloud installation.
 # More information:
 #   - https://github.com/geerlingguy/ansible-role-php

@@ -6,6 +6,7 @@
     that:
       - php_version is defined
     fail_msg: "php_version must be defined."
+    quiet: true
 
 - name: Stop services before upgrade
   ansible.builtin.include_tasks: manage_services.yml
