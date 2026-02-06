@@ -5,7 +5,8 @@
   ansible.builtin.assert:
     that:
       - php_version is defined
-    fail_msg: "php_version must be defined."
+      - php_version | length > 0
+    fail_msg: "php_version must be defined and non-empty."
     quiet: true
 
 - name: Stop services before upgrade
@@ -13,7 +14,7 @@
   vars:
     nextcloud_maintenance_mode: true
 
-- name: Set role variables
+- name: Set PHP configuration paths
   ansible.builtin.set_fact:
     php_conf_paths:
       - /etc/php/{{ php_version }}/fpm
@@ -25,11 +26,11 @@
       - /etc/php/{{ php_version }}/cli/conf.d
 
 - name: 'Remove installed PHP versions different from {{ php_version }}'
-  ansible.builtin.import_role:
+  ansible.builtin.include_role:
     name: geerlingguy.php-versions
 
 - name: 'Install PHP {{ php_version }}'
-  ansible.builtin.import_role:
+  ansible.builtin.include_role:
     name: geerlingguy.php
   vars:
     php_enable_webserver: false # We handle starting/stopping the webserver within this role.
