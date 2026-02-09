@@ -4,10 +4,10 @@
 
 - name: Synchronize system addressbook
   become: true
-  become_user: "{{ nextcloud_websrv_user | default( 'www-data' ) }}"
+  become_user: "{{ nextcloud_websrv_user }}"
   command: php occ -vvv dav:sync-system-addressbook
   args:
-    chdir: "{{ nextcloud_webroot | default('/opt/nextcloud') }}"
+    chdir: "{{ nextcloud_webroot }}"
   changed_when: true
 
 ...

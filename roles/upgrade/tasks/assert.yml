@@ -5,7 +5,7 @@
 
 - name: Check that nextcloud_webroot exists
   ansible.builtin.stat:
-    path: "{{ nextcloud_webroot | default('/opt/nextcloud') }}"
+    path: "{{ nextcloud_webroot }}"
   register: _nextcloud_webroot
 
 - name: Ensure nextcloud_webroot is a valid directory
@@ -14,12 +14,12 @@
       - _nextcloud_webroot.stat.exists
       - _nextcloud_webroot.stat.isdir
     fail_msg: >-
-      nextcloud_webroot '{{ nextcloud_webroot | default('/opt/nextcloud') }}' does not exist or is not a directory.
-    success_msg: "nextcloud_webroot '{{ nextcloud_webroot | default('/opt/nextcloud') }}' exists and is a directory."
+      nextcloud_webroot '{{ nextcloud_webroot }}' does not exist or is not a directory.
+    success_msg: "nextcloud_webroot '{{ nextcloud_webroot }}' exists and is a directory."
 
 - name: Check that Nextcloud occ command exists
   ansible.builtin.stat:
-    path: "{{ nextcloud_webroot | default('/opt/nextcloud') }}/occ"
+    path: "{{ nextcloud_webroot }}/occ"
   register: _nextcloud_occ
 
 - name: Ensure Nextcloud installation is valid (occ exists)
@@ -27,17 +27,17 @@
     that:
       - _nextcloud_occ.stat.exists
     fail_msg: >-
-      No valid Nextcloud installation found at '{{ nextcloud_webroot | default('/opt/nextcloud') }}'.
-    success_msg: "Valid Nextcloud installation found at '{{ nextcloud_webroot | default('/opt/nextcloud') }}'."
+      No valid Nextcloud installation found at '{{ nextcloud_webroot }}'.
+    success_msg: "Valid Nextcloud installation found at '{{ nextcloud_webroot }}'."
 
 # Verify that instance status is adequate
 
 - name: Check Nextcloud instance health
   become: true
-  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
+  become_user: "{{ nextcloud_websrv_user }}"
   ansible.builtin.command: php occ status --output=json
   args:
-    chdir: "{{ nextcloud_webroot | default('/opt/nextcloud') }}"
+    chdir: "{{ nextcloud_webroot }}"
   register: _nextcloud_health
   changed_when: false
 
@@ -50,7 +50,7 @@
     that:
       - _nextcloud_status.installed | bool
     fail_msg: >-
-      Nextcloud instance at '{{ nextcloud_webroot | default('/opt/nextcloud') }}' reports as not installed.
+      Nextcloud instance at '{{ nextcloud_webroot }}' reports as not installed.
     success_msg: "Nextcloud instance reports as installed."
 
 - name: Ensure Nextcloud is not in maintenance mode

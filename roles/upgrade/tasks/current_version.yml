@@ -3,10 +3,10 @@
 
 - name: Get Nextcloud status
   become: true
-  become_user: "{{ nextcloud_websrv_user | default('www-data') }}"
+  become_user: "{{ nextcloud_websrv_user }}"
   ansible.builtin.command: php occ status --output=json
   args:
-    chdir: "{{ nextcloud_webroot | default('/opt/nextcloud') }}"
+    chdir: "{{ nextcloud_webroot }}"
   changed_when: false
   register: nextcloud_status
 
