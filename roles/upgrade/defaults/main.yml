@@ -24,6 +24,11 @@ nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 #   - https://github.com/geerlingguy/ansible-role-php-versions
 nextcloud_upgrade_php: false
 
+# If this is set to true, upon PHP upgrade the role will choose the recommended version
+# instead of the latest supported one for the corresponding Nextcloud version.
+# Please note this might cause more PHP upgrades along the Nextcloud upgrade path.
+nextcloud_upgrade_php_rec: false
+
 # PHP requirements per Nextcloud major version
 # Based on: https://github.com/nextcloud/server/wiki/Releases-and-PHP-versions
 nextcloud_php_requirements:

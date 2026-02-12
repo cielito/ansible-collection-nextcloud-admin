@@ -33,7 +33,7 @@
 - name: Upgrade PHP if version is incompatible
   ansible.builtin.include_tasks: php_upgrade.yml
   vars:
-    php_version: "{{ php_rec_version | default(omit) }}"
+    php_version: "{{ (php_rec_version if nextcloud_upgrade_php_rec else php_max_version) | default(omit) }}"
   when:
     - not _php_version_compatible
     - nextcloud_upgrade_php

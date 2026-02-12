@@ -1,0 +1,53 @@
+---
+# Playbook to upgrade PostgreSQL
+
+- name: Assert postgresql_version is defined
+  ansible.builtin.assert:
+    that:
+      - postgresql_version is defined
+      - postgresql_version | length > 0
+    fail_msg: "postgresql_version must be defined and non-empty."
+    quiet: true
+
+- name: Set PostgreSQL configuration paths
+  ansible.builtin.set_fact:
+    postgresql_data_dir: "/var/lib/postgresql/{{ postgresql_version }}/main"
+    postgresql_bin_path: "/usr/lib/postgresql/{{ postgresql_version }}/bin"
+    postgresql_config_path: "/etc/postgresql/{{ postgresql_version }}/main"
+    postgresql_daemon: "postgresql@{{ postgresql_version }}-main"
+
+- name: Dump Nextcloud database
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ nextcloud_db_name }}"
+    state: dump
+    target: "/tmp/{{ nextcloud_db_name }}-forPG{{ postgresql_version }}.sql"
+
+- name: Stop PostgreSQL
+  ansible.builtin.service:
+    name: "postgresql"
+    state: stopped
+
+- name: Uninstall PostgreSQL
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: absent
+    purge: true
+  loop:
+    - postgresql-*
+    - postgresql-client-*
+
+- name: Install PostgreSQL {{ postgresql_version }}
+  ansible.builtin.include_role:
+    name: geerlingguy.postgresql
+
+- name: Restore Nextcloud database
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ nextcloud_db_name }}"
+    state: restore
+    target: "/tmp/{{ nextcloud_db_name }}-forPG{{ postgresql_version }}.sql"
+
+...
