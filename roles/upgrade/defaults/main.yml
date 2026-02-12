@@ -13,7 +13,7 @@ nextcloud_websrv_user: "www-data"
 nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 
 # Enables automatic PHP version upgrade using geerlingguy.php-versions and geerlingguy.php roles.
-# When enabled, upgrades PHP to the recommended version for the target Nextcloud major version.
+# When enabled, upgrades PHP to a supported version (see below) for the target Nextcloud major version.
 # WARNING: This will:
 #   - Uninstall all existing PHP versions except the target version
 #   - Add third-party repositories if required for the target PHP version
@@ -45,6 +45,38 @@ nextcloud_php_requirements:
   '30': { min: '8.1', rec: '8.3', max: '8.3' }
   '31': { min: '8.1', rec: '8.3', max: '8.4' }
   '32': { min: '8.1', rec: '8.3', max: '8.4' }
+
+# Enables automatic PostgreSQL version upgrade using geerlingguy.postgresql role and community.postgresql collection.
+# When enabled, upgrades PostgreSQL to the latest supported version for the target Nextcloud major version.
+# WARNING: This will:
+#   - Uninstall all existing PostgreSQL versions
+#   - Add third-party repositories if required for the target PostgreSQL version
+#   - Stop web server and cron services during PostgreSQL version upgrade
+# IMPORTANT: Use the same PostgreSQL configuration variables as your initial Nextcloud installation. This is for APT-based systems only.
+# More information:
+#   - https://github.com/geerlingguy/ansible-role-postgresql
+nextcloud_upgrade_postgresql: false
+
+# Nextcloud database name in PostgreSQL.
+# Please change this value if not the same in your installation.
+nextcloud_db_name: "nextcloud"
+
+# PostgreSQL requirements per Nextcloud major version
+# Based on: https://docs.nextcloud.com/server/stable/admin_manual/installation/system_requirements.html
+nextcloud_postgresql_requirements:
+  '20': { min: '9.5', max: '11' }
+  '21': { min: '9.6', max: '13' }
+  '22': { min: '9.6', max: '13' }
+  '23': { min: '9.6', max: '13' }
+  '24': { min: '10', max: '14' }
+  '25': { min: '10', max: '15' }
+  '26': { min: '10', max: '15' }
+  '27': { min: '10', max: '15' }
+  '28': { min: '10', max: '15' }
+  '29': { min: '10', max: '16' }
+  '30': { min: '12', max: '16' }
+  '31': { min: '13', max: '17' }
+  '32': { min: '13', max: '17' }
 
 nextcloud_upgrade_path:
 - 20.0.14

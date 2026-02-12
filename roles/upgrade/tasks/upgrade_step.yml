@@ -5,6 +5,10 @@
 - name: Run PHP version compatibility check
   ansible.builtin.include_tasks: php_version_check.yml
 
+# Check PostgreSQL version compatibility
+- name: Run PostgreSQL version compatibility check
+  ansible.builtin.include_tasks: postgresql_version_check.yml
+
 # Check Nextcloud version we are upgrading to
 - name: Run version checks
   ansible.builtin.include_tasks: version_check.yml
