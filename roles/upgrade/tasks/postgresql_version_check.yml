@@ -36,10 +36,24 @@
     - not _postgresql_version_compatible
     - not nextcloud_upgrade_postgresql
 
-- name: Upgrade PostgreSQL if version is incompatible
+- name: Determine target PostgreSQL version
+  ansible.builtin.set_fact:
+    _postgresql_target_version: >-
+      {% if distro_postgresql_version is defined
+         and distro_postgresql_version is version(postgresql_min_version, '>=')
+         and distro_postgresql_version is version(postgresql_max_version, '<=') -%}
+        {{ distro_postgresql_version }}
+      {%- else -%}
+        {{ postgresql_max_version }}
+      {%- endif %}
+  when:
+    - not _postgresql_version_compatible
+    - nextcloud_upgrade_postgresql
+
+- name: "Upgrade PostgreSQL to {{ _postgresql_target_version | default('') }}"
   ansible.builtin.include_tasks: postgresql_upgrade.yml
   vars:
-    postgresql_version: "{{ postgresql_max_version | default(omit) }}"
+    postgresql_version: "{{ _postgresql_target_version | default(omit) }}"
   when:
     - not _postgresql_version_compatible
     - nextcloud_upgrade_postgresql

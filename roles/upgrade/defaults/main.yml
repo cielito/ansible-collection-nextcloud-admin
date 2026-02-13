@@ -18,7 +18,9 @@ nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 #   - Uninstall all existing PHP versions except the target version
 #   - Add third-party repositories if required for the target PHP version
 #   - Stop web server and cron services during PHP version upgrade
-# IMPORTANT: Use the same PHP configuration variables as your initial Nextcloud installation.
+# IMPORTANT:
+#   - Use the same PHP configuration variables as your initial Nextcloud installation.
+#   - This is for APT-based systems only.
 # More information:
 #   - https://github.com/geerlingguy/ansible-role-php
 #   - https://github.com/geerlingguy/ansible-role-php-versions
@@ -52,7 +54,9 @@ nextcloud_php_requirements:
 #   - Uninstall all existing PostgreSQL versions
 #   - Add third-party repositories if required for the target PostgreSQL version
 #   - Stop web server and cron services during PostgreSQL version upgrade
-# IMPORTANT: Use the same PostgreSQL configuration variables as your initial Nextcloud installation. This is for APT-based systems only.
+# IMPORTANT:
+#   - Use the same PostgreSQL configuration variables as your initial Nextcloud installation.
+#   - This is for APT-based systems only.
 # More information:
 #   - https://github.com/geerlingguy/ansible-role-postgresql
 nextcloud_upgrade_postgresql: false

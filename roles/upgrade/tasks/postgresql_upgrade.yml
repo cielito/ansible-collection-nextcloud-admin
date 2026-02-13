@@ -51,6 +51,13 @@
     suites: '{{ ansible_facts["distribution_release"] }}-pgdg'
     components: main
     signed_by: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: "{{ 'absent' if postgresql_version == distro_postgresql_version | default('') else 'present' }}"
+  register: _postgresql_repo
+
+- name: Update apt cache after repo configuration
+  ansible.builtin.apt:
+    update_cache: true
+  when: _postgresql_repo.changed | default(false)
 
 - name: Install PostgreSQL {{ postgresql_version }}
   ansible.builtin.include_role:
