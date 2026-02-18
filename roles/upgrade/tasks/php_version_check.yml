@@ -10,21 +10,21 @@
   ansible.builtin.set_fact:
     current_php_version: "{{ _php_version_result.stdout | trim }}"
 
-- name: Get PHP requirements for target version
+- name: Get supported PHP versions for both current and target Nextcloud versions
   ansible.builtin.set_fact:
-    php_min_version: "{{ nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]].min }}"
-    php_max_version: "{{ nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]].max }}"
-    php_rec_version: "{{ nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]].rec }}"
+    _php_supported_versions: >-
+      {{ nextcloud_php_requirements[current_nextcloud_version.split('.')[0]]
+         | intersect(nextcloud_php_requirements[current_step_nextcloud_version.split('.')[0]]) }}
 
-- name: Check if PHP version is compatible with Nextcloud {{ current_step_nextcloud_version }}
+- name: Check if PHP version is compatible with both current and target Nextcloud versions
   ansible.builtin.set_fact:
-    _php_version_compatible: "{{ current_php_version is version(php_min_version, '>=') and current_php_version is version(php_max_version, '<=') }}"
+    _php_version_compatible: "{{ current_php_version in _php_supported_versions }}"
 
 - name: Fail if PHP version is incompatible and upgrade is disabled
   ansible.builtin.fail:
     msg: >-
-      PHP {{ current_php_version }} is not compatible with Nextcloud {{ current_step_nextcloud_version }}.
-      Required: PHP >= {{ php_min_version }} and <= {{ php_max_version }}.
+      PHP {{ current_php_version }} is not compatible with Nextcloud {{ current_nextcloud_version }} and {{ current_step_nextcloud_version }}.
+      Supported versions: {{ _php_supported_versions | join(', ') }}.
       Set nextcloud_upgrade_php to true to enable automatic PHP upgrades.
   when:
     - not _php_version_compatible
@@ -33,14 +33,10 @@
 - name: Determine target PHP version
   ansible.builtin.set_fact:
     _php_target_version: >-
-      {% if distro_php_version is defined
-         and distro_php_version is version(php_min_version, '>=')
-         and distro_php_version is version(php_max_version, '<=') -%}
+      {% if distro_php_version is defined and distro_php_version in _php_supported_versions -%}
         {{ distro_php_version }}
-      {%- elif nextcloud_upgrade_php_rec -%}
-        {{ php_rec_version }}
       {%- else -%}
-        {{ php_max_version }}
+        {{ _php_supported_versions | last }}
       {%- endif %}
   when:
     - not _php_version_compatible

@@ -15,22 +15,21 @@
          if postgresql_info.version.major | int < 10
          else postgresql_info.version.major | string }}
 
-- name: Get PostgreSQL requirements for target version
+- name: Get supported PostgreSQL versions for both current and target Nextcloud versions
   ansible.builtin.set_fact:
-    postgresql_min_version: "{{ nextcloud_postgresql_requirements[current_step_nextcloud_version.split('.')[0]].min }}"
-    postgresql_max_version: "{{ nextcloud_postgresql_requirements[current_step_nextcloud_version.split('.')[0]].max }}"
+    _postgresql_supported_versions: >-
+      {{ nextcloud_postgresql_requirements[current_nextcloud_version.split('.')[0]]
+         | intersect(nextcloud_postgresql_requirements[current_step_nextcloud_version.split('.')[0]]) }}
 
-- name: Check if PostgreSQL version is compatible with Nextcloud {{ current_step_nextcloud_version }}
+- name: Check if PostgreSQL version is compatible with both current and target Nextcloud versions
   ansible.builtin.set_fact:
-    _postgresql_version_compatible: >-
-      {{ _postgresql_release_version is version(postgresql_min_version, '>=')
-      and _postgresql_release_version is version(postgresql_max_version, '<=') }}
+    _postgresql_version_compatible: "{{ _postgresql_release_version in _postgresql_supported_versions }}"
 
 - name: Fail if PostgreSQL version is incompatible and upgrade is disabled
   ansible.builtin.fail:
     msg: >-
-      PostgreSQL {{ _postgresql_release_version }} is not compatible with Nextcloud {{ current_step_nextcloud_version }}.
-      Required: PostgreSQL >= {{ postgresql_min_version }} and <= {{ postgresql_max_version }}.
+      PostgreSQL {{ _postgresql_release_version }} is not compatible with Nextcloud {{ current_nextcloud_version }} and {{ current_step_nextcloud_version }}.
+      Supported versions: {{ _postgresql_supported_versions | join(', ') }}.
       Set nextcloud_upgrade_postgresql to true to enable automatic PostgreSQL upgrades.
   when:
     - not _postgresql_version_compatible
@@ -39,12 +38,10 @@
 - name: Determine target PostgreSQL version
   ansible.builtin.set_fact:
     _postgresql_target_version: >-
-      {% if distro_postgresql_version is defined
-         and distro_postgresql_version is version(postgresql_min_version, '>=')
-         and distro_postgresql_version is version(postgresql_max_version, '<=') -%}
+      {% if distro_postgresql_version is defined and distro_postgresql_version in _postgresql_supported_versions -%}
         {{ distro_postgresql_version }}
       {%- else -%}
-        {{ postgresql_max_version }}
+        {{ _postgresql_supported_versions | last }}
       {%- endif %}
   when:
     - not _postgresql_version_compatible

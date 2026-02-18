@@ -26,27 +26,22 @@ nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 #   - https://github.com/geerlingguy/ansible-role-php-versions
 nextcloud_upgrade_php: false
 
-# If this is set to true, upon PHP upgrade the role will choose the recommended version
-# instead of the latest supported one for the corresponding Nextcloud version.
-# Please note this might cause more PHP upgrades along the Nextcloud upgrade path.
-nextcloud_upgrade_php_rec: false
-
-# PHP requirements per Nextcloud major version
+# List of all supported PHP versions per Nextcloud major release.
 # Based on: https://github.com/nextcloud/server/wiki/Releases-and-PHP-versions
 nextcloud_php_requirements:
-  '20': { min: '7.2', rec: '7.4', max: '7.4' }
-  '21': { min: '7.3', rec: '8.0', max: '8.0' }
-  '22': { min: '7.3', rec: '8.0', max: '8.0' }
-  '23': { min: '7.3', rec: '8.0', max: '8.0' }
-  '24': { min: '7.4', rec: '8.0', max: '8.1' }
-  '25': { min: '7.4', rec: '8.1', max: '8.1' }
-  '26': { min: '8.0', rec: '8.1', max: '8.2' }
-  '27': { min: '8.0', rec: '8.2', max: '8.2' }
-  '28': { min: '8.0', rec: '8.2', max: '8.3' }
-  '29': { min: '8.0', rec: '8.2', max: '8.3' }
-  '30': { min: '8.1', rec: '8.3', max: '8.3' }
-  '31': { min: '8.1', rec: '8.3', max: '8.4' }
-  '32': { min: '8.1', rec: '8.3', max: '8.4' }
+  '20': ['7.2', '7.3', '7.4']
+  '21': ['7.3', '7.4', '8.0']
+  '22': ['7.3', '7.4', '8.0']
+  '23': ['7.3', '7.4', '8.0']
+  '24': ['7.4', '8.0', '8.1']
+  '25': ['7.4', '8.0', '8.1']
+  '26': ['8.0', '8.1', '8.2']
+  '27': ['8.0', '8.1', '8.2']
+  '28': ['8.0', '8.1', '8.2', '8.3']
+  '29': ['8.0', '8.1', '8.2', '8.3']
+  '30': ['8.1', '8.2', '8.3']
+  '31': ['8.1', '8.2', '8.3', '8.4']
+  '32': ['8.1', '8.2', '8.3', '8.4']
 
 # Enables automatic PostgreSQL version upgrade using geerlingguy.postgresql role and community.postgresql collection.
 # When enabled, upgrades PostgreSQL to the latest supported version for the target Nextcloud major version.
@@ -65,22 +60,22 @@ nextcloud_upgrade_postgresql: false
 # Please change this value if not the same in your installation.
 nextcloud_db_name: "nextcloud"
 
-# PostgreSQL requirements per Nextcloud major version
+# List of all supported PostgreSQL versions per Nextcloud major release.
 # Based on: https://docs.nextcloud.com/server/stable/admin_manual/installation/system_requirements.html
 nextcloud_postgresql_requirements:
-  '20': { min: '9.5', max: '11' }
-  '21': { min: '9.6', max: '13' }
-  '22': { min: '9.6', max: '13' }
-  '23': { min: '9.6', max: '13' }
-  '24': { min: '10', max: '14' }
-  '25': { min: '10', max: '15' }
-  '26': { min: '10', max: '15' }
-  '27': { min: '10', max: '15' }
-  '28': { min: '10', max: '15' }
-  '29': { min: '10', max: '16' }
-  '30': { min: '12', max: '16' }
-  '31': { min: '13', max: '17' }
-  '32': { min: '13', max: '17' }
+  '20': ['9.5', '9.6', '10', '11']
+  '21': ['9.6', '10', '11', '12', '13']
+  '22': ['9.6', '10', '11', '12', '13']
+  '23': ['9.6', '10', '11', '12', '13']
+  '24': ['10', '11', '12', '13', '14']
+  '25': ['10', '11', '12', '13', '14', '15']
+  '26': ['10', '11', '12', '13', '14', '15']
+  '27': ['10', '11', '12', '13', '14', '15']
+  '28': ['10', '11', '12', '13', '14', '15']
+  '29': ['10', '11', '12', '13', '14', '15', '16']
+  '30': ['12', '13', '14', '15', '16']
+  '31': ['13', '14', '15', '16', '17']
+  '32': ['13', '14', '15', '16', '17']
 
 nextcloud_upgrade_path:
 - 20.0.14
