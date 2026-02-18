@@ -53,10 +53,19 @@
       Nextcloud instance at '{{ nextcloud_webroot }}' reports as not installed.
     success_msg: "Nextcloud instance reports as installed."
 
+- name: Check Nextcloud maintenance mode
+  become: true
+  become_user: "{{ nextcloud_websrv_user }}"
+  ansible.builtin.command: php occ maintenance:mode
+  args:
+    chdir: "{{ nextcloud_webroot }}"
+  register: _nextcloud_maintenance
+  changed_when: false
+
 - name: Ensure Nextcloud is not in maintenance mode
   ansible.builtin.assert:
     that:
-      - not (_nextcloud_status.maintenance | bool)
+      - "'disabled' in _nextcloud_maintenance.stdout"
     fail_msg: >-
       Nextcloud is currently in maintenance mode. Please disable maintenance mode before running
       the upgrade.
