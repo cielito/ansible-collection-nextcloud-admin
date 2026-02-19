@@ -13,7 +13,7 @@ nextcloud_websrv_user: "www-data"
 nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 
 # Enables automatic PHP version upgrade using geerlingguy.php-versions and geerlingguy.php roles.
-# When enabled, upgrades PHP to a supported version (see below) for the target Nextcloud major version.
+# When needed, upgrades PHP to a version compatible with both current and target Nextcloud versions.
 # WARNING: This will:
 #   - Uninstall all existing PHP versions except the target version
 #   - Add third-party repositories if required for the target PHP version
@@ -44,7 +44,7 @@ nextcloud_php_requirements:
   '32': ['8.1', '8.2', '8.3', '8.4']
 
 # Enables automatic PostgreSQL version upgrade using geerlingguy.postgresql role and community.postgresql collection.
-# When enabled, upgrades PostgreSQL to the latest supported version for the target Nextcloud major version.
+# When needed, upgrades PostgreSQL to a version compatible with both current and target Nextcloud versions.
 # WARNING: This will:
 #   - Uninstall all existing PostgreSQL versions
 #   - Add third-party repositories if required for the target PostgreSQL version
