@@ -14,9 +14,12 @@ nextcloud_target_version: '{{ nextcloud_upgrade_path | last }}'
 
 # Enables automatic PHP version upgrade using geerlingguy.php-versions and geerlingguy.php roles.
 # When needed, upgrades PHP to a version compatible with both current and target Nextcloud versions.
+# The role will try to install a version available in your distribution's official repositories,
+# before opting for the latest compatible version (that may need a third-party repo).
+# To override this, check the `vars/` folder in this role.
 # WARNING: This will:
 #   - Uninstall all existing PHP versions except the target version
-#   - Add third-party repositories if required for the target PHP version
+#   - Add/remove third-party repositories for the target PHP version, as needed
 #   - Stop web server and cron services during PHP version upgrade
 # IMPORTANT:
 #   - Use the same PHP configuration variables as your initial Nextcloud installation.
@@ -45,9 +48,12 @@ nextcloud_php_requirements:
 
 # Enables automatic PostgreSQL version upgrade using geerlingguy.postgresql role and community.postgresql collection.
 # When needed, upgrades PostgreSQL to a version compatible with both current and target Nextcloud versions.
+# The role will try to install a version available in your distribution's official repositories,
+# before opting for the latest compatible version (that may need a third-party repo).
+# To override this, check the `vars/` folder in this role.
 # WARNING: This will:
 #   - Uninstall all existing PostgreSQL versions
-#   - Add third-party repositories if required for the target PostgreSQL version
+#   - Add/remove third-party repositories for the target PostgreSQL version, as needed
 #   - Stop web server and cron services during PostgreSQL version upgrade
 # IMPORTANT:
 #   - Use the same PostgreSQL configuration variables as your initial Nextcloud installation.
