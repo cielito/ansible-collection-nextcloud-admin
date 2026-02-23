@@ -1,31 +1,73 @@
 nextcloud.admin.upgrade
 =======================
 
-Role to upgrade a nextcloud instance along an upgrade path.
+Upgrades a Nextcloud instance step-by-step along a defined upgrade path. The role auto-detects the current version and iterates through each intermediate release up to the target version.
+
+In summary, at each step the role:
+- Checks PHP and PostgreSQL version compatibility (optionally upgrading them)
+- Runs version-specific pre-upgrade tasks (if any)
+- Runs the Nextcloud updater, managing maintenance mode
+- Runs version-specific post-upgrade tasks (if any)
+
+At the moment, this role only works in APT-based systems (Debian 12/13). Additionally, some features are missing, like MySQL/MariaDB support or PHP/PostgreSQL variable auto-detection. PRs are encouraged!
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Ansible >= 2.14
+- Jmespath
+- APT-based system (Debian 12/13)
+- *Optional* - for automatic PHP upgrades: `geerlingguy.php` and `geerlingguy.php_versions` roles
+- *Optional* - for automatic PostgreSQL upgrades: `geerlingguy.postgresql` role and `community.postgresql` collection
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+### Basic
 
-Dependencies
-------------
+| Variable | Default | Description |
+|---|---|---|
+| `nextcloud_webroot` | `/opt/nextcloud` | Path to the Nextcloud installation |
+| `nextcloud_websrv_user` | `www-data` | System user running the web server |
+| `nextcloud_initial_version` | auto-detected | Starting version (set to override detection) |
+| `nextcloud_target_version` | last version in `nextcloud_upgrade_path` | Target version to upgrade to |
+| `nextcloud_upgrade_path` | `[20.0.14, ..., 32.0.6]` | Ordered list of versions to step through |
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+### PHP upgrade
+
+| Variable | Default | Description |
+|---|---|---|
+| `nextcloud_upgrade_php` | `false` | Enable automatic PHP version upgrades |
+| `nextcloud_php_requirements` | see defaults | Supported PHP versions per Nextcloud major release |
+
+When enabled, the role installs a PHP version compatible with both the current and target Nextcloud versions, using distribution packages when possible.  
+At the moment, it is absolutely necessary to set PHP role variables for the proper configuration of the newly installed PHP version.  
+**Warning:** this uninstalls all other PHP versions and may add/remove third-party repositories. See defaults for more information.
+
+### PostgreSQL upgrade
+
+| Variable | Default | Description |
+|---|---|---|
+| `nextcloud_upgrade_postgresql` | `false` | Enable automatic PostgreSQL version upgrades |
+| `nextcloud_db_name` | `nextcloud` | PostgreSQL database name |
+| `nextcloud_postgresql_requirements` | see defaults | Supported PostgreSQL versions per Nextcloud major release |
+
+When enabled, the role installs a PostgreSQL version compatible with both the current and target Nextcloud versions, using distribution packages when possible.  
+At the moment, it is absolutely necessary to set PostgreSQL role variables for the proper configuration of the newly installed PostgreSQL version.  
+**Warning:** this uninstalls all existing PostgreSQL versions and may add/remove third-party repositories. See defaults for more information.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- hosts: nextcloud_servers
+  roles:
+    - role: nextcloud.admin.upgrade
+      vars:
+        nextcloud_webroot: /var/www/nextcloud
+        nextcloud_target_version: "32.0.6"
+        nextcloud_upgrade_php: true
+```
 
 License
 -------
@@ -35,6 +77,6 @@ BSD
 Author Information
 ------------------
 
-Daniel Viñar Ulriksen ([@ulvida](https://github.com/ulvida)), Francisco Zadikian ([@fzadikian](https://github.com/fzadikian))
+Francisco Zadikian ([@fzadikian](https://github.com/fzadikian))
 
-Based on [template](https://git.interior.edu.uy/cielito/upgrade) by @ulvida.
+Based on [template](https://git.interior.edu.uy/cielito/upgrade) by [@ulvida](https://github.com/ulvida).
