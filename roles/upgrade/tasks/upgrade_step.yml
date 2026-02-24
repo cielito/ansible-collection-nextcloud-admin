@@ -19,9 +19,9 @@
   ansible.builtin.include_tasks: '{{ item }}'
   with_first_found:
     - files:
-        - upgrade/tasks_pre_{{ current_step_nextcloud_version }}.yml
-        - upgrade/tasks_pre_{{ step_version_members[0:2] | join('.') }}.yml
-        - upgrade/tasks_pre_{{ step_version_members[0] | string }}.yml
+        - upgrade_tasks/pre_{{ current_step_nextcloud_version }}.yml
+        - upgrade_tasks/pre_{{ step_version_members[0:2] | join('.') }}.yml
+        - upgrade_tasks/pre_{{ step_version_members[0] | string }}.yml
       skip: true
   vars:
     step_version_members: "{{ current_step_nextcloud_version | ansible.builtin.split('.') }}"
@@ -78,9 +78,9 @@
   ansible.builtin.include_tasks: '{{ item }}'
   with_first_found:
     - files:
-        - upgrade/tasks_post_{{ current_step_nextcloud_version }}.yml
-        - upgrade/tasks_post_{{ step_version_members[0:2] | join('.') }}.yml
-        - upgrade/tasks_post_{{ step_version_members[0] | string }}.yml
+        - upgrade_tasks/post_{{ current_step_nextcloud_version }}.yml
+        - upgrade_tasks/post_{{ step_version_members[0:2] | join('.') }}.yml
+        - upgrade_tasks/post_{{ step_version_members[0] | string }}.yml
       skip: true
   vars:
     step_version_members: "{{ current_step_nextcloud_version | ansible.builtin.split('.') }}"

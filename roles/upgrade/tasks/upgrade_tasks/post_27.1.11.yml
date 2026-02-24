@@ -5,7 +5,7 @@
 - name: Synchronize system addressbook
   become: true
   become_user: "{{ nextcloud_websrv_user }}"
-  command: php occ -vvv dav:sync-system-addressbook
+  ansible.builtin.command: php occ -vvv dav:sync-system-addressbook
   args:
     chdir: "{{ nextcloud_webroot }}"
   changed_when: true
