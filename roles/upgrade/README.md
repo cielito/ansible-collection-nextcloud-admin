@@ -16,6 +16,7 @@ Requirements
 
 - Ansible >= 2.14
 - Jmespath
+- Xmltodict
 - APT-based system (Debian 12/13)
 - *Optional* - for automatic PHP upgrades: `geerlingguy.php` and `geerlingguy.php_versions` roles
 - *Optional* - for automatic PostgreSQL upgrades: `geerlingguy.postgresql` role and `community.postgresql` collection
