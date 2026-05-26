@@ -2,6 +2,23 @@
 
 ## Specific tasks after upgrading to NC 33
 
+## Workaround to patch a bug
+## Related PR: https://github.com/nextcloud/server/pull/60654
+
+- name: Fix UserConfig.php typed value handling
+  become: true
+  ansible.posix.patch:
+    src: UserConfig.patch
+    dest: "{{ nextcloud_webroot }}/lib/private/Config/UserConfig.php"
+    backup: true
+
+- name: Fix AppConfig.php typed value handling
+  become: true
+  ansible.posix.patch:
+    src: AppConfig.patch
+    dest: "{{ nextcloud_webroot }}/lib/private/AppConfig.php"
+    backup: true
+
 - name: Add new mimetypes for handling certain file types
   become: true
   become_user: "{{ nextcloud_websrv_user }}"

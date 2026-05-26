@@ -1,0 +1,8 @@
+--- a/lib/private/Config/UserConfig.php
++++ b/lib/private/Config/UserConfig.php
+@@ -688,1 +688,4 @@
+-		$b = strtolower($this->getTypedValue($userId, $app, $key, $default ? 'true' : 'false', $lazy, ValueType::BOOL));
++		/** @psalm-suppress RedundantCondition, TypeDoesNotContainNull */
++		$value = $this->getTypedValue($userId, $app, $key, $default ? 'true' : 'false', $lazy, ValueType::BOOL) ?? ($default ? 'true' : 'false');
++		/** @psalm-suppress RedundantCast */
++		$b = strtolower((string)$value);
