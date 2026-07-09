@@ -45,6 +45,7 @@ nextcloud_php_requirements:
   '31': ['8.1', '8.2', '8.3', '8.4']
   '32': ['8.1', '8.2', '8.3', '8.4']
   '33': ['8.2', '8.3', '8.4', '8.5']
+  '34': ['8.2', '8.3', '8.4', '8.5']
 
 # Set to `true` to skip PostgreSQL version check (therefore, no upgrade either). Use at your own risk!
 # You may want to toggle this if you use a different DBMS.
@@ -87,6 +88,7 @@ nextcloud_postgresql_requirements:
   '31': ['13', '14', '15', '16', '17']
   '32': ['13', '14', '15', '16', '17']
   '33': ['14', '15', '16', '17', '18']
+  '34': ['14', '15', '16', '17', '18']
 
 # Nextcloud version path the role will follow.
 nextcloud_upgrade_path:
@@ -102,8 +104,9 @@ nextcloud_upgrade_path:
 - 29.0.16
 - 30.0.17
 - 31.0.14 # EOL
-- 32.0.11 # https://nextcloud.com/changelog/#latest32
-- 33.0.5  # https://nextcloud.com/changelog/#latest33
+- 32.0.12 # https://nextcloud.com/changelog/#latest32
+- 33.0.6  # https://nextcloud.com/changelog/#latest33
+- 34.0.1  # https://nextcloud.com/changelog/#latest34
 
 # References:
 #   - https://nextcloud.com/changelog/
