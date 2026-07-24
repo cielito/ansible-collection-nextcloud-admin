@@ -39,7 +39,7 @@ Role Variables
 | `nextcloud_websrv_user` | `www-data` | System user running the web server |
 | `nextcloud_initial_version` | auto-detected | Starting version (set to override detection) |
 | `nextcloud_target_version` | last version in `nextcloud_upgrade_path` | Target version to upgrade to |
-| `nextcloud_upgrade_path` | `[20.0.14, ..., 34.0.1]` | Ordered list of versions to step through |
+| `nextcloud_upgrade_path` | `[20.0.14, ..., 34.0.2]` | Ordered list of versions to step through |
 
 ### PHP upgrade
 
@@ -74,7 +74,7 @@ Example Playbook
     - role: nextcloud.admin.upgrade
       vars:
         nextcloud_webroot: /var/www/nextcloud
-        nextcloud_target_version: "34.0.1"
+        nextcloud_target_version: "34.0.2"
         nextcloud_upgrade_php: true
 ```
 
