@@ -9,3 +9,6 @@
 transaction-isolation = READ-COMMITTED
 binlog_format = ROW
 innodb_file_per_table = ON
+{% if nextcloud_mysql_buffer_pool_size is not none %}
+innodb_buffer_pool_size = {{ nextcloud_mysql_buffer_pool_size }}
+{% endif %}
